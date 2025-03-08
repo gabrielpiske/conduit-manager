@@ -7,13 +7,13 @@ import javax.swing.JOptionPane;
 
 public class ConexaoBanco {
 
-    private String urlDB = "jdbc:mysql://127.0.0.1:3306/eletroduto";
-    private String root = "root";
-    private String password = "";
+    private static String URL = "jdbc:mysql://127.0.0.1:3306/eletroduto";
+    private static String USER = "root";
+    private static String PASSWORD = "12345";
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
         try {
-            return DriverManager.getConnection(urlDB, root, password);
+            return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Erro na Conexão: " + e);
             return null;
