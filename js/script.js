@@ -132,6 +132,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p><strong>Percentual de Ocupação:</strong> ${percentual.toFixed(2)}%</p>
                 <p><strong>Limite Permitido pela ABNT:</strong> ${limite}%</p>
                 <p><strong>Status:</strong> ${percentual > limite ? "❌ Fora do limite" : "✅ Dentro do limite"}</p>
+                <hr>
+                <p><strong>Projetista - Técnico em Desenvolvimento de Sistemas: </strong>Gabriel Schweder Piske</p>
+                <p><strong>Professor Orientador - Engenheiro Eletrecista: </strong>Anderson Luis Wilvert</p>
             </div>
         </div>`;
     }
