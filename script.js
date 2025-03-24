@@ -6,11 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultadoDiv = document.getElementById("resultado");
 
     const eletrodutos = [
-        { id: 1, nome: "Canaflex 20mm", area: 186 },
-        { id: 2, nome: "Canaflex 25mm", area: 337 },
-        { id: 3, nome: "PVC Rígido 32mm", area: 530 },
-        { id: 4, nome: "PVC Rígido 40mm", area: 883 },
-        { id: 5, nome: "PVC Rígido 50mm", area: 1397 }
+        { tipo: "Kanaflex", tamanhos: [{ nome: "Kanaflex 20mm", area: 186 }, { nome: "Kanaflex 25mm", area: 337 }] },
+        { tipo: "Corrugado", tamanhos: [{ nome: "Corrugado 20mm", area: 200 }, { nome: "Corrugado 32mm", area: 500 }] },
+        { tipo: "Corrugado Reforçado", tamanhos: [{ nome: "Corrugado Reforçado 25mm", area: 300 }, { nome: "Corrugado Reforçado 40mm", area: 800 }] },
+        { tipo: "PVC Rígido", tamanhos: [{ nome: "PVC Rígido 32mm", area: 530 }, { nome: "PVC Rígido 50mm", area: 1397 }] }
     ];
 
     const fios = [
@@ -23,8 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     eletrodutos.forEach(eletroduto => {
         let option = document.createElement("option");
-        option.value = eletroduto.id;
-        option.textContent = `${eletroduto.nome} (Área: ${eletroduto.area} mm²)`;
+        option.value = eletroduto.tipo;
+        option.textContent = eletroduto.tipo;
         selectEletroduto.appendChild(option);
     });
 
@@ -62,9 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
         resultadoDiv.innerHTML = "";
         resultadoDiv.classList.remove("alert-danger", "alert-info");
 
-        let eletrodutoSelecionado = eletrodutos.find(e => e.id == selectEletroduto.value);
-        if (!eletrodutoSelecionado) {
-            mostrarResultado("Selecione um eletroduto.", "danger");
+        let tipoEletrodutoSelecionado = selectEletroduto.value;
+        if (!tipoEletrodutoSelecionado) {
+            mostrarResultado("Selecione um tipo de eletroduto.", "danger");
             return;
         }
 
@@ -86,17 +85,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         let limitePermitido = calcularLimiteABNT(totalCondutores);
-        let percentualOcupacao = (areaOcupada / eletrodutoSelecionado.area) * 100;
+        let eletrodutoSelecionado = eletrodutos.find(e => e.tipo === tipoEletrodutoSelecionado);
 
-        if (percentualOcupacao > limitePermitido) {
-            let eletrodutoRecomendado = eletrodutos.find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
-            let mensagem = eletrodutoRecomendado
-                ? `Fora do limite. Recomenda-se: ${eletrodutoRecomendado.nome} (Área: ${eletrodutoRecomendado.area} mm²)`
-                : "Fora do limite. Não há eletroduto adequado disponível.";
-            mostrarResultado(mensagem, "danger");
+        let eletrodutoAdequado = eletrodutoSelecionado.tamanhos.find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
+
+        if (eletrodutoAdequado) {
+            mostrarResultado(`Use: ${eletrodutoAdequado.nome} (Área: ${eletrodutoAdequado.area} mm²)`, "info");
+            gerarRelatorio(eletrodutoAdequado, areaOcupada, (areaOcupada / eletrodutoAdequado.area) * 100, limitePermitido);
         } else {
-            mostrarResultado("Dentro do limite permitido.", "info");
-            gerarRelatorio(eletrodutoSelecionado, areaOcupada, percentualOcupacao, limitePermitido);
+            let eletrodutoRecomendado = eletrodutos.flatMap(e => e.tamanhos).find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
+            mostrarResultado(eletrodutoRecomendado ? `Nenhum adequado no tipo escolhido. Sugestão: ${eletrodutoRecomendado.nome}` : "Nenhum eletroduto disponível é adequado.", "danger");
         }
     });
 
@@ -125,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p><strong>Status:</strong> ${percentual > limite ? "❌ Fora do limite" : "✅ Dentro do limite"}</p>
                 <hr>
                 <p><strong>Projetista - Técnico em Desenvolvimento de Sistemas: </strong>Gabriel Schweder Piske</p>
-                <p><strong>Professor Orientador - Engenheiro Eletrecista: </strong>Anderson Luis Wilvert</p>
+                <p><strong>Professor Orientador - Engenheiro Eletricista: </strong>Anderson Luis Wilvert</p>
             </div>
         </div>`;
     }
