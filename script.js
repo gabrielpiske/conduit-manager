@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let removerBtn = document.createElement("button");
         removerBtn.textContent = "Remover";
-        removerBtn.classList.add("btn", "btn-danger", "mb-2");
+        removerBtn.classList.add("main", "mb-2");
         removerBtn.addEventListener("click", () => listItem.remove());
 
         let listItem = document.createElement("li");

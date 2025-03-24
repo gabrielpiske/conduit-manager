@@ -1,33 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+:root {
+    --bg-color: #333333;
+    --section-color: #3F3F3F;
+    --subsection-color: #454545;
+    --selection-bg-color: #656565;
+    --text-color: #ffffff;
+    --main-color: #006BB7;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+    color: var(--text-color);
+}
+
 body {
-    background-color: #f8f9fa;
-    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--bg-color);
+    min-height: 100vh;
+    padding-top: 80px; /* Espaço para o header fixo */
 }
 
-h1 {
-    color: #333;
-    margin-bottom: 20px;
+/* Header fixo no topo */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    background-color: var(--main-color);
+    z-index: 1000;
 }
 
-.container {
-    max-width: 800px;
-    background: white;
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    max-width: 600px;
+}
+
+/* Estilo para as seções */
+section {
+    background-color: var(--section-color);
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-.list-group-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.form-select, .form-control {
-    width: 70%;
-    display: inline-block;
-}
-
-.btn {
+/* Estilo para select e buttons */
+select, button {
     width: 100%;
+    padding: 10px;
     margin-top: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+/* Ajuste para o select */
+select {
+    background-color: var(--selection-bg-color);
+    color: var(--text-color);
+}
+
+/* Estilo para botão principal */
+button.main {
+    background-color: var(--main-color);
+    cursor: pointer;
+}
+
+button:hover {
+    filter: brightness(1.2);
+}
+
+/* Lista de fios */
+ul.list-group {
+    margin-top: 10px;
+    list-style: none;
+    padding: 0;
+}
+
+/* Alerta de resultado */
+.alert {
+    padding: 15px;
+    background-color: var(--subsection-color);
+    border-radius: 5px;
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    main {
+        width: 90%;
+    }
+}
+
+/* Estilo para inputs */
+input.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--selection-bg-color);
+    color: var(--text-color);
+}
+
+/* Estilo para margem inferior */
+.mb-2 {
+    margin-bottom: 10px; /* Ajuste conforme necessário */
 }
