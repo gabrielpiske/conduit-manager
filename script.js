@@ -6,10 +6,41 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultadoDiv = document.getElementById("resultado");
 
     const eletrodutos = [
-        { tipo: "Kanaflex", tamanhos: [{ nome: "Kanaflex 20mm", area: 186 }, { nome: "Kanaflex 25mm", area: 337 }] },
-        { tipo: "Corrugado", tamanhos: [{ nome: "Corrugado 20mm", area: 200 }, { nome: "Corrugado 32mm", area: 500 }] },
-        { tipo: "Corrugado Reforçado", tamanhos: [{ nome: "Corrugado Reforçado 25mm", area: 300 }, { nome: "Corrugado Reforçado 40mm", area: 800 }] },
-        { tipo: "PVC Rígido", tamanhos: [{ nome: "PVC Rígido 32mm", area: 530 }, { nome: "PVC Rígido 50mm", area: 1397 }] }
+        { tipo: "Kanaflex", tamanhos: [
+            { nome: "Kanaflex 1/4 31,5mm", area: 779 },
+            { nome: "Kanaflex 1/2 43,0mm", area: 1452 },
+            { nome: "Kanaflex 50,8mm", area: 2027 },
+            { nome: "Kanaflex 75,0mm", area: 4417 },
+            { nome: "Kanaflex 103,0mm", area: 8332 },
+            { nome: "Kanaflex 128,0mm", area: 12873 },
+            { nome: "Kanaflex 155,0mm", area: 18864 },
+            { nome: "Kanaflex 176,0mm", area: 24333 },
+            { nome: "Kanaflex 205,0mm", area: 32985 }
+        ] },
+
+        { tipo: "Corrugado", tamanhos: [
+            { nome: "Corrugado 20mm", area: 186 },
+            { nome: "Corrugado 25mm", area: 283 },
+            { nome: "Corrugado 32mm", area: 500 }
+        ] },
+
+        { tipo: "Corrugado Reforçado", tamanhos: [
+            { nome: "Corrugado Reforçado 20mm", area: 186 }, 
+            { nome: "Corrugado Reforçado 25mm", area: 283 }, 
+            { nome: "Corrugado Reforçado 32mm", area: 490 }
+        ] },
+
+        { tipo: "PVC Rígido", tamanhos: [
+            { nome: "PVC Rígido 1/2 16,4mm", area: 137 },
+            { nome: "PVC Rígido 3/4 21,3mm", area: 165 },
+            { nome: "PVC Rígido 27,5mm", area: 221 },
+            { nome: "PVC Rígido 1/4 36,1mm", area: 287 },
+            { nome: "PVC Rígido 1/2 41,4mm", area: 287 },
+            { nome: "PVC Rígido 52,8mm", area: 430 },
+            { nome: "PVC Rígido 1/2 67,1mm", area: 560 },
+            { nome: "PVC Rígido 79,6mm", area: 697 },
+            { nome: "PVC Rígido 103,1mm", area: 1007 }
+        ] }
     ];
 
     const fios = [
@@ -120,7 +151,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p><strong>Área Ocupada:</strong> ${areaOcupada} mm²</p>
                 <p><strong>Percentual de Ocupação:</strong> ${percentual.toFixed(2)}%</p>
                 <p><strong>Limite Permitido:</strong> ${limite}%</p>
-                <p><strong>Status:</strong> ${percentual > limite ? "❌ Fora do limite" : "✅ Dentro do limite"}</p>
                 <hr>
                 <p><strong>Projetista - Técnico em Desenvolvimento de Sistemas: </strong>Gabriel Schweder Piske</p>
                 <p><strong>Professor Orientador - Engenheiro Eletricista: </strong>Anderson Luis Wilvert</p>
