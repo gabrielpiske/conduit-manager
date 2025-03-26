@@ -143,18 +143,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function gerarRelatorio(eletroduto, areaOcupada, percentual, limite) {
         resultadoDiv.innerHTML += `
-        <div class="card mt-4">
-            <div class="card-body">
-                <h4 class="card-title">Relatório</h4>
-                <p><strong>Eletroduto:</strong> ${eletroduto.nome}</p>
-                <p><strong>Área Total:</strong> ${eletroduto.area} mm²</p>
-                <p><strong>Área Ocupada:</strong> ${areaOcupada} mm²</p>
-                <p><strong>Percentual de Ocupação:</strong> ${percentual.toFixed(2)}%</p>
-                <p><strong>Limite Permitido:</strong> ${limite}%</p>
-                <hr>
-                <p><strong>Projetista - Técnico em Desenvolvimento de Sistemas: </strong>Gabriel Schweder Piske</p>
-                <p><strong>Professor Orientador - Engenheiro Eletricista: </strong>Anderson Luis Wilvert</p>
-            </div>
-        </div>`;
+            <div class="relatorio-card">
+                <h2>📊 Relatório de Ocupação</h2>
+                <p><span class="label">Eletroduto:</span> ${eletroduto.nome}</p>
+                <p><span class="label">Área Total:</span> ${eletroduto.area} mm²</p>
+                <p><span class="label">Área Ocupada:</span> ${areaOcupada} mm²</p>
+                <p><span class="label">Percentual de Ocupação:</span> <strong>${percentual.toFixed(2)}%</strong></p>
+                <p><span class="label">Limite Permitido:</span> ${limite}%</p>
+            </div>`;
     }
 });
