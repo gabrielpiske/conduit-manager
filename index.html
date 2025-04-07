@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cálculo de Eletrodutos</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<!--teste-->
 <body>
     <header>
         <h1>Dimensionamento de Eletrodutos Conforme Taxa de Ocupação</h1>
@@ -21,14 +19,79 @@
             </select>
         </section>
 
-        <section>
+        <section id="selecaoFios">
             <h2>Escolha a Isolação do Condutor</h2>
-            <button id="adicionarFio" class="main">Adicionar Fio</button>
+            <div class="fios-container">
+                <div class="fios-header">
+                    <div class="fio-coluna">
+                        <h3>PVC</h3>
+                    </div>
+                    <div class="fio-coluna">
+                        <h3>EPR/XLPE 1KV</h3>
+                        <h4>UNIFILAR</h4>
+                    </div>
+                    <div class="fio-coluna">
+                        <h3>EPR/XLPE 1KV</h3>
+                        <h4>MULTIFILAR 2 VIAS</h4>
+                    </div>
+                    <div class="fio-coluna">
+                        <h3>EPR/XLPE 1KV</h3>
+                        <h4>MULTIFILAR 3 VIAS</h4>
+                    </div>
+                    <div class="fio-coluna">
+                        <h3>EPR/XLPE 1KV</h3>
+                        <h4>MULTIFILAR 4 VIAS</h4>
+                    </div>
+                </div>
+                
+                <!-- Linha inicial (única que aparece no início) -->
+                <div class="fios-linha">
+                    <div class="fio-opcao">
+                        <input type="radio" name="linha1" class="fio-radio" data-tipo="PVC">
+                        <select class="fio-tamanho" disabled>
+                            <option value="">Selecione</option>
+                        </select>
+                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+                    </div>
+                    <div class="fio-opcao">
+                        <input type="radio" name="linha1" class="fio-radio" data-tipo="EPR/XLPE 1KV UNIFILAR">
+                        <select class="fio-tamanho" disabled>
+                            <option value="">Selecione</option>
+                        </select>
+                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+                    </div>
+                    <div class="fio-opcao">
+                        <input type="radio" name="linha1" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 2 VIAS">
+                        <select class="fio-tamanho" disabled>
+                            <option value="">Selecione</option>
+                        </select>
+                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+                    </div>
+                    <div class="fio-opcao">
+                        <input type="radio" name="linha1" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 3 VIAS">
+                        <select class="fio-tamanho" disabled>
+                            <option value="">Selecione</option>
+                        </select>
+                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+                    </div>
+                    <div class="fio-opcao">
+                        <input type="radio" name="linha1" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 4 VIAS">
+                        <select class="fio-tamanho" disabled>
+                            <option value="">Selecione</option>
+                        </select>
+                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+                    </div>
+                </div>
+                
+                <!-- Container para linhas adicionais (inicialmente vazio) -->
+                <div id="linhas-adicionais"></div>
+            </div>
+            
+            <button id="adicionarLinha" class="main">+ Adicionar Linha</button>
             <ul id="listarFios" class="list-group"></ul>
         </section>
 
         <button id="calcular" class="main">Calcular</button>
-
         <div id="resultado" class="alert" style="display: none;"></div>
     </main>
 
@@ -40,5 +103,4 @@
 
     <script type="module" src="script.js"></script>
 </body>
-
 </html>
