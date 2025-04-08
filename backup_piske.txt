@@ -679,3 +679,374 @@ footer p {
     padding: 5px 0;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Eletrodutos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Dimensionamento de Eletrodutos Conforme Taxa de Ocupação</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2>Escolha um Eletroduto</h2>
+            <select id="selectEletroduto">
+                <option value="">Selecione um Eletroduto</option>
+            </select>
+        </section>
+
+        <section>
+            <h2>Escolha a Isolação do Condutor</h2>
+            <button id="adicionarFio" class="main">Adicionar Fio</button>
+            <ul id="listarFios" class="list-group"></ul>
+        </section>
+
+        <button id="calcular" class="main">Calcular</button>
+
+        <div id="resultado" class="alert" style="display: none;"></div>
+    </main>
+
+    <footer>
+        <p><strong>Projetista - Técnico em Desenvolvimento de Sistemas: </strong> <a href="https://portfolio-piske.vercel.app/">Gabriel Schweder Piske</a></p>
+        <p><strong>Professor Orientador - Engenheiro Eletricista: </strong>Anderson Luis Wilvert</p>
+        <p>&copy SENAI - 2025</p>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
+
+document.addEventListener("DOMContentLoaded", () => {
+    const selectEletroduto = document.getElementById("selectEletroduto");
+    const listaFios = document.getElementById("listarFios");
+    const adicionarFioBtn = document.getElementById("adicionarFio");
+    const calcularBtn = document.getElementById("calcular");
+    const resultadoDiv = document.getElementById("resultado");
+
+    const eletrodutos = [
+        { tipo: "Kanaflex", tamanhos: [
+            { nome: "Kanaflex 1/4 31,5mm", area: 779 },
+            { nome: "Kanaflex 1/2 43,0mm", area: 1452 },
+            { nome: "Kanaflex 50,8mm", area: 2027 },
+            { nome: "Kanaflex 75,0mm", area: 4417 },
+            { nome: "Kanaflex 103,0mm", area: 8332 },
+            { nome: "Kanaflex 128,0mm", area: 12873 },
+            { nome: "Kanaflex 155,0mm", area: 18864 },
+            { nome: "Kanaflex 176,0mm", area: 24333 },
+            { nome: "Kanaflex 205,0mm", area: 32985 }
+        ] },
+
+        { tipo: "Corrugado", tamanhos: [
+            { nome: "Corrugado 20mm", area: 186 },
+            { nome: "Corrugado 25mm", area: 283 },
+            { nome: "Corrugado 32mm", area: 500 }
+        ] },
+
+        { tipo: "Corrugado Reforçado", tamanhos: [
+            { nome: "Corrugado Reforçado 20mm", area: 186 }, 
+            { nome: "Corrugado Reforçado 25mm", area: 283 }, 
+            { nome: "Corrugado Reforçado 32mm", area: 490 }
+        ] },
+
+        { tipo: "PVC Rígido", tamanhos: [
+            { nome: "PVC Rígido 1/2 16,4mm", area: 137 },
+            { nome: "PVC Rígido 3/4 21,3mm", area: 165 },
+            { nome: "PVC Rígido 27,5mm", area: 221 },
+            { nome: "PVC Rígido 1/4 36,1mm", area: 287 },
+            { nome: "PVC Rígido 1/2 41,4mm", area: 287 },
+            { nome: "PVC Rígido 52,8mm", area: 430 },
+            { nome: "PVC Rígido 1/2 67,1mm", area: 560 },
+            { nome: "PVC Rígido 79,6mm", area: 697 },
+            { nome: "PVC Rígido 103,1mm", area: 1007 }
+        ] }
+    ];
+
+    const fios = [
+        { id: 1, nome: "Cabo 1,5mm²", area: 17 },
+        { id: 2, nome: "Cabo 2,5mm²", area: 21 },
+        { id: 3, nome: "Cabo 4mm²", area: 30 },
+        { id: 4, nome: "Cabo 6mm²", area: 38 },
+        { id: 5, nome: "Cabo 10mm²", area: 61 }
+    ];
+
+    eletrodutos.forEach(eletroduto => {
+        let option = document.createElement("option");
+        option.value = eletroduto.tipo;
+        option.textContent = eletroduto.tipo;
+        selectEletroduto.appendChild(option);
+    });
+
+    adicionarFioBtn.addEventListener("click", () => {
+        let select = document.createElement("select");
+        select.classList.add("form-select", "mb-2");
+
+        fios.forEach(fio => {
+            let option = document.createElement("option");
+            option.value = fio.id;
+            option.textContent = `${fio.nome} (Área: ${fio.area} mm²)`;
+            select.appendChild(option);
+        });
+
+        let inputQuantidade = document.createElement("input");
+        inputQuantidade.type = "number";
+        inputQuantidade.min = "1";
+        inputQuantidade.value = "1";
+        inputQuantidade.classList.add("form-control", "mb-2");
+
+        let removerBtn = document.createElement("button");
+        removerBtn.textContent = "Remover";
+        removerBtn.classList.add("main", "mb-2");
+        removerBtn.addEventListener("click", () => listItem.remove());
+
+        let listItem = document.createElement("li");
+        listItem.classList.add("list-group-item");
+        listItem.appendChild(select);
+        listItem.appendChild(inputQuantidade);
+        listItem.appendChild(removerBtn);
+        listaFios.appendChild(listItem);
+    });
+
+    calcularBtn.addEventListener("click", () => {
+        resultadoDiv.innerHTML = "";
+        resultadoDiv.classList.remove("alert-danger", "alert-info");
+
+        let tipoEletrodutoSelecionado = selectEletroduto.value;
+        if (!tipoEletrodutoSelecionado) {
+            mostrarResultado("Selecione um tipo de eletroduto.", "danger");
+            return;
+        }
+
+        let areaOcupada = 0;
+        let totalCondutores = 0;
+
+        listaFios.querySelectorAll("li").forEach(item => {
+            let fioSelecionado = fios.find(f => f.id == item.querySelector("select").value);
+            let quantidade = parseInt(item.querySelector("input").value);
+            if (fioSelecionado && quantidade > 0) {
+                areaOcupada += fioSelecionado.area * quantidade;
+                totalCondutores += quantidade;
+            }
+        });
+
+        if (areaOcupada === 0) {
+            mostrarResultado("Adicione pelo menos um fio válido.", "danger");
+            return;
+        }
+
+        let limitePermitido = calcularLimiteABNT(totalCondutores);
+        let eletrodutoSelecionado = eletrodutos.find(e => e.tipo === tipoEletrodutoSelecionado);
+
+        let eletrodutoAdequado = eletrodutoSelecionado.tamanhos.find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
+
+        if (eletrodutoAdequado) {
+            mostrarResultado(`Use: ${eletrodutoAdequado.nome} (Área: ${eletrodutoAdequado.area} mm²)`, "info");
+            gerarRelatorio(eletrodutoAdequado, areaOcupada, (areaOcupada / eletrodutoAdequado.area) * 100, limitePermitido);
+        } else {
+            let eletrodutoRecomendado = eletrodutos.flatMap(e => e.tamanhos).find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
+            mostrarResultado(eletrodutoRecomendado ? `Nenhum adequado no tipo escolhido. Sugestão: ${eletrodutoRecomendado.nome}` : "Nenhum eletroduto disponível é adequado.", "danger");
+        }
+    });
+
+    function calcularLimiteABNT(totalCondutores) {
+        if (totalCondutores === 1) return 53;
+        if (totalCondutores === 2) return 31;
+        return 40;
+    }
+
+    function mostrarResultado(mensagem, tipo) {
+        resultadoDiv.textContent = mensagem;
+        resultadoDiv.classList.add(`alert-${tipo}`);
+        resultadoDiv.style.display = "block";
+    }
+
+    function gerarRelatorio(eletroduto, areaOcupada, percentual, limite) {
+        resultadoDiv.innerHTML += `
+            <div class="relatorio-card">
+                <h2>📊 Relatório de Ocupação</h2>
+                <p><span class="label">Eletroduto:</span> ${eletroduto.nome}</p>
+                <p><span class="label">Área Total:</span> ${eletroduto.area} mm²</p>
+                <p><span class="label">Área Ocupada:</span> ${areaOcupada} mm²</p>
+                <p><span class="label">Percentual de Ocupação:</span> <strong>${percentual.toFixed(2)}%</strong></p>
+                <p><span class="label">Limite Permitido:</span> ${limite}%</p>
+            </div>`;
+    }
+});
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+:root {
+    --bg-color: #333333;
+    --section-color: #3F3F3F;
+    --subsection-color: #454545;
+    --selection-bg-color: #656565;
+    --text-color: #ffffff;
+    --main-color: #006BB7;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+    color: var(--text-color);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between; /* Garante que o conteúdo preencha o espaço */
+    background-color: var(--bg-color);
+    min-height: 100vh; /* Ocupa toda a altura da tela */
+    padding-top: 80px; /* Espaço para o header fixo */
+}
+
+/* Header fixo no topo */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    background-color: var(--main-color);
+    z-index: 1000;
+}
+
+main {
+    flex: 1; /* Faz o main expandir e empurrar o footer para baixo */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    max-width: 600px;
+}
+
+/* Estilo para as seções */
+section {
+    background-color: var(--section-color);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* Estilo para select e buttons */
+select, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+/* Ajuste para o select */
+select {
+    background-color: var(--selection-bg-color);
+    color: var(--text-color);
+}
+
+/* Estilo para botão principal */
+button.main {
+    background-color: var(--main-color);
+    cursor: pointer;
+}
+
+button:hover {
+    filter: brightness(1.2);
+}
+
+/* Lista de fios */
+ul.list-group {
+    margin-top: 10px;
+    list-style: none;
+    padding: 0;
+}
+
+/* Alerta de resultado */
+.alert {
+    padding: 15px;
+    background-color: var(--subsection-color);
+    border-radius: 5px;
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    main {
+        width: 90%;
+    }
+}
+
+/* Estilo para inputs */
+input.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--selection-bg-color);
+    color: var(--text-color);
+}
+
+/* Estilo para margem inferior */
+.mb-2 {
+    margin-bottom: 10px; /* Ajuste conforme necessário */
+}
+
+.relatorio-card {
+    background-color: var(--subsection-color);
+    border-radius: 10px;
+    padding: 30px;
+    margin-top: 20px;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.relatorio-card h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: var(--main-color);
+}
+
+.relatorio-card p {
+    font-size: 20px;
+    margin: 10px 0;
+}
+
+.relatorio-card .label {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+/* Rodapé com créditos */
+footer {
+    padding: 20px;
+    text-align: center;
+    background-color: var(--section-color);
+    width: 100%; /* Garante que ocupe a largura total */
+}
+
+footer p {
+    font-size: 16px;
+}
