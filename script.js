@@ -15,22 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
         selectEletroduto.appendChild(option);
     });
 
-    // Adiciona evento aos radios da primeira linha
-    document.querySelectorAll('.fio-radio').forEach(radio => {
-        radio.addEventListener('change', function() {
-            const linha = this.closest('.fios-linha');
-            const selectTamanho = linha.querySelector('.fio-tamanho');
-            const inputQuantidade = linha.querySelector('.fio-quantidade');
-            
-            if (this.checked) {
-                const tipoFio = this.getAttribute('data-tipo');
-                preencherSelectTamanho(selectTamanho, tipoFio);
-                selectTamanho.disabled = false;
-                inputQuantidade.disabled = false;
-            }
-        });
-    });
-
     // Função para preencher os selects de tamanho
     function preencherSelectTamanho(select, tipoFio) {
         select.innerHTML = '<option value="">Selecione</option>';
@@ -47,9 +31,45 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Delegar eventos para elementos dinâmicos
+    document.addEventListener('change', function(e) {
+        // Evento para radios de tipo de fio
+        if (e.target.classList.contains('fio-radio') && e.target.checked) {
+            const linha = e.target.closest('.fios-linha');
+            const selectTamanho = linha.querySelector('.fio-tamanho');
+            const inputQuantidade = linha.querySelector('.fio-quantidade');
+            
+            const tipoFio = e.target.getAttribute('data-tipo');
+            preencherSelectTamanho(selectTamanho, tipoFio);
+            selectTamanho.disabled = false;
+            inputQuantidade.disabled = false;
+        }
+    });
+
+    // Evento para remover linhas
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remover-linha')) {
+            e.target.closest('.fios-linha').remove();
+            atualizarBotaoAdicionar();
+        }
+    });
+
+    // Função para atualizar estado do botão adicionar
+    function atualizarBotaoAdicionar() {
+        const totalLinhas = document.querySelectorAll('.fios-linha').length;
+        adicionarLinhaBtn.disabled = totalLinhas >= 4;
+        
+        if (adicionarLinhaBtn.disabled) {
+            adicionarLinhaBtn.style.opacity = "0.5";
+            adicionarLinhaBtn.style.cursor = "not-allowed";
+        } else {
+            adicionarLinhaBtn.style.opacity = "1";
+            adicionarLinhaBtn.style.cursor = "pointer";
+        }
+    }
+
     // Adicionar nova linha de fios
     adicionarLinhaBtn.addEventListener("click", () => {
-        // Verifica quantas linhas já existem
         const totalLinhas = document.querySelectorAll('.fios-linha').length;
         
         if (totalLinhas >= 4) {
@@ -88,44 +108,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input type="radio" name="linha${linhaNumero}" id="fio-multi4-${linhaNumero}" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 4 VIAS">
                     <label for="fio-multi4-${linhaNumero}" class="fio-label">EPR/XLPE 1KV<br><small>MULTIFILAR 4 VIAS</small></label>
                 </div>
-                </div>
-                <select class="fio-tamanho" disabled>
-                    <option value="">Selecione</option>
-                </select>
-                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
-                <button class="remover-linha" aria-label="Remover linha">×</button>
-            `;
-            
-            linhasAdicionais.appendChild(novaLinha);
-            
-            // ... (mantenha o restante do código de eventos) ...
-        });
+            </div>
+            <select class="fio-tamanho" disabled>
+                <option value="">Selecione</option>
+            </select>
+            <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+            <button class="remover-linha" aria-label="Remover linha">×</button>
+        `;
         
-        // Adicione este estilo para desabilitar o botão quando atingir o máximo
-        const maxLinhas = 4;
-        function atualizarBotaoAdicionar() {
-            const totalLinhas = document.querySelectorAll('.fios-linha').length;
-            adicionarLinhaBtn.disabled = totalLinhas >= maxLinhas;
-            
-            if (adicionarLinhaBtn.disabled) {
-                adicionarLinhaBtn.style.opacity = "0.5";
-                adicionarLinhaBtn.style.cursor = "not-allowed";
-            } else {
-                adicionarLinhaBtn.style.opacity = "1";
-                adicionarLinhaBtn.style.cursor = "pointer";
-            }
-        }
-        
-        // Chame esta função sempre que uma linha for adicionada ou removida
-        adicionarLinhaBtn.addEventListener("click", atualizarBotaoAdicionar);
-        
-        // Adicione ao evento de remoção de linha
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remover-linha')) {
-                e.target.closest('.fios-linha').remove();
-                atualizarBotaoAdicionar();
-            }
-        });
+        linhasAdicionais.appendChild(novaLinha);
+        atualizarBotaoAdicionar();
+    });
 
     // Calcular dimensionamento
     calcularBtn.addEventListener("click", () => {
@@ -142,7 +135,6 @@ document.addEventListener("DOMContentLoaded", () => {
         let totalCondutores = 0;
         const fiosSelecionados = [];
 
-        // Verifica todas as linhas (inicial e adicionais)
         document.querySelectorAll('.fios-linha').forEach(linha => {
             const radioSelecionado = linha.querySelector('.fio-radio:checked');
             const selectTamanho = linha.querySelector('.fio-tamanho');
@@ -157,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 const optionText = selectTamanho.options[selectTamanho.selectedIndex].text;
                 fiosSelecionados.push({
-                    tipo: tipoFio, // Adiciona o tipo do fio
+                    tipo: tipoFio,
                     nome: optionText.split(' (')[0],
                     area: area,
                     quantidade: quantidade
@@ -173,7 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const limitePermitido = calcularLimiteABNT(totalCondutores);
         const eletrodutoSelecionado = eletrodutos.find(e => e.tipo === tipoEletrodutoSelecionado);
 
-        // Encontrar o menor eletroduto que atende ao limite
         const eletrodutoAdequado = eletrodutoSelecionado.tamanhos
             .sort((a, b) => a.area - b.area)
             .find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
@@ -183,7 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
             mostrarResultado(`Eletroduto adequado: ${eletrodutoAdequado.nome} (${eletrodutoAdequado.area.toFixed(2)} mm²)`, "info");
             gerarRelatorio(eletrodutoAdequado, areaOcupada, percentual, limitePermitido, fiosSelecionados);
         } else {
-            // Procurar em todos os eletrodutos se não encontrar no tipo selecionado
             const todosEletrodutos = eletrodutos.flatMap(e => e.tamanhos);
             const eletrodutoRecomendado = todosEletrodutos
                 .sort((a, b) => a.area - b.area)
@@ -231,4 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `;
     }
+
+    // Adiciona a primeira linha inicial
+    adicionarLinhaBtn.click();
 });
