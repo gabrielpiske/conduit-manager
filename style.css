@@ -1,13 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 :root {
-    --bg-color: #333333;
-    --section-color: #3F3F3F;
-    --subsection-color: #454545;
-    --selection-bg-color: #656565;
+    --bg-color: #3a3a3a;
+    --section-color: #4a4a4a;
+    --subsection-color: #5a5a5a;
+    --selection-bg-color: #758592;
     --text-color: #ffffff;
-    --main-color: #006BB7;
+    --main-color: #2b8cd9;
+    --secondary-color: #1e6fb0;
 }
+
 
 * {
     margin: 0;
@@ -20,90 +22,91 @@
 body {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-between; /* Garante que o conteúdo preencha o espaço */
+    min-height: 100vh;
     background-color: var(--bg-color);
-    min-height: 100vh; /* Ocupa toda a altura da tela */
-    padding-top: 80px; /* Espaço para o header fixo */
 }
 
-/* Header fixo no topo */
 header {
-    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     text-align: center;
-    padding: 20px;
     background-color: var(--main-color);
     z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    display: grid;
+    grid-template-columns: 1fr 6fr 1fr;
+    align-items: center;
+    padding: 25px;
+}
+
+img {
+    width: 100%;
+    height: 100%;
 }
 
 main {
-    flex: 1; /* Faz o main expandir e empurrar o footer para baixo */
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 20px;
     padding: 20px;
     width: 100%;
-    max-width: 600px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-/* Estilo para as seções */
 section {
     background-color: var(--section-color);
     padding: 20px;
     border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilo para select e buttons */
-select, button {
+select,
+button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-top: 10px;
     border-radius: 5px;
     border: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
 }
 
-/* Ajuste para o select */
 select {
     background-color: var(--selection-bg-color);
     color: var(--text-color);
-}
-
-/* Estilo para botão principal */
-button.main {
-    background-color: var(--main-color);
     cursor: pointer;
 }
 
-button:hover {
-    filter: brightness(1.2);
+button.main {
+    background-color: var(--main-color);
+    cursor: pointer;
+    font-weight: 500;
 }
 
-/* Lista de fios */
+button.main:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
 ul.list-group {
     margin-top: 10px;
     list-style: none;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-/* Alerta de resultado */
 .alert {
     padding: 15px;
     background-color: var(--subsection-color);
     border-radius: 5px;
+    margin-top: 20px;
 }
 
-
-/* Responsividade */
-@media (max-width: 768px) {
-    main {
-        width: 90%;
-    }
-}
-
-/* Estilo para inputs */
 input.form-control {
     width: 100%;
     padding: 10px;
@@ -114,29 +117,29 @@ input.form-control {
     color: var(--text-color);
 }
 
-/* Estilo para margem inferior */
 .mb-2 {
-    margin-bottom: 10px; /* Ajuste conforme necessário */
+    margin-bottom: 10px;
 }
 
 .relatorio-card {
     background-color: var(--subsection-color);
     border-radius: 10px;
-    padding: 30px;
+    padding: 25px;
     margin-top: 20px;
     text-align: left;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .relatorio-card h2 {
-    font-size: 28px;
-    margin-bottom: 20px;
+    font-size: 24px;
+    margin-bottom: 15px;
     color: var(--main-color);
 }
 
-.relatorio-card p {
-    font-size: 20px;
-    margin: 10px 0;
+.relatorio-card p, .relatorio-card li {
+    font-size: 18px;
+    margin: 8px 0;
+    list-style-type: none;
 }
 
 .relatorio-card .label {
@@ -144,14 +147,289 @@ input.form-control {
     color: var(--text-color);
 }
 
-/* Rodapé com créditos */
 footer {
     padding: 20px;
     text-align: center;
     background-color: var(--section-color);
-    width: 100%; /* Garante que ocupe a largura total */
+    width: 100%;
+    margin-top: auto;
 }
 
 footer p {
     font-size: 16px;
+}
+
+.remover-linha {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.remover-linha:hover {
+    background-color: #cc0000;
+}
+
+/* Ajuste na linha para posicionamento relativo */
+.fios-linha {
+    position: relative;
+    padding-top: 30px; /* Espaço para o botão */
+    /* mantém os outros estilos que você já tem */
+}
+
+.fios-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    overflow-x: auto;
+}
+
+.fios-header {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+    min-width: 800px;
+}
+
+.fio-coluna {
+    text-align: center;
+    padding: 12px;
+    background-color: var(--subsection-color);
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fio-coluna h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.fio-coluna h4 {
+    margin: 5px 0 0 0;
+    font-size: 14px;
+    font-weight: normal;
+    color: #cccccc;
+}
+
+/*.fios-linha {
+    gap: 10px;
+    min-width: 800px;
+}*/
+
+.fios-linha {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.fios-linha select,
+input {
+    margin-bottom: 10px;
+}
+
+.inputs {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    min-width: 800px;
+}
+
+.fio-opcao {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background-color: var(--subsection-color);
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/*.fio-radio {
+    margin: 0 auto;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}*/
+
+.opcoes-fio {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+.fio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.fio-label {
+    width: 100%;
+    height: 70px;
+    padding: 10px;
+    background-color: #3b3b3b;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.fio-radio {
+    display: none;
+}
+
+.fio-radio:checked+.fio-label {
+    background-color: var(--main-color);
+    border-color: #93c5fd;
+}
+
+.fio-radio:hover+.fio-label {
+    transform: translateY(-2px);
+}
+
+
+.fio-label small {
+    font-size: 0.75rem;
+    font-weight: normal;
+    color: #d1d5db;
+}
+
+
+
+.fio-tamanho,
+.fio-quantidade {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    background-color: var(--selection-bg-color);
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+.fio-tamanho {
+    cursor: pointer;
+}
+
+.fio-opcao input[type="radio"]:checked~.fio-tamanho,
+.fio-opcao input[type="radio"]:checked~.fio-quantidade {
+    background-color: var(--selection-bg-color);
+    opacity: 1;
+}
+
+.fio-opcao input[type="radio"]:not(:checked)~.fio-tamanho,
+.fio-opcao input[type="radio"]:not(:checked)~.fio-quantidade {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#adicionarLinha {
+    margin-bottom: 15px;
+    background-color: var(--subsection-color);
+    color: var(--text-color);
+    border: 1px solid var(--main-color);
+}
+
+#adicionarLinha:hover {
+    background-color: var(--main-color);
+}
+
+#linhas-adicionais {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Responsividade */
+@media (max-width: 1200px) {
+    main {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 992px) {
+
+    .fios-header,
+    .fios-linha {
+        min-width: 700px;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        padding: 10px;
+    }
+    
+    header img {
+        margin-right: 0;
+        margin-bottom: 10px;
+        height: 40px;
+    }
+    
+    header h1 {
+        font-size: 1.2rem;
+        padding: 0;
+    }
+    
+    body {
+        padding-top: 120px; /* Ajuste conforme necessário */
+    }
+}
+
+@media (max-width: 576px) {
+
+    select,
+    button {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .relatorio-card {
+        padding: 15px;
+    }
+
+    .relatorio-card h2 {
+        font-size: 20px;
+    }
+
+    .relatorio-card p, .relatorio-card li {
+        font-size: 16px;
+    }
+}
+
+.fios-selecionados ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.fios-selecionados li {
+    padding: 5px 0;
 }

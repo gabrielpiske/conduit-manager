@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Eletrodutos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Dimensionamento de Eletrodutos Conforme Taxa de Ocupação</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2>Escolha um Eletroduto</h2>
+            <select id="selectEletroduto">
+                <option value="">Selecione um Eletroduto</option>
+            </select>
+        </section>
+
+        <section id="selecaoFios">
+            <h2>Escolha a Isolação do Condutor</h2>
+            <div class="fios-container">
+                <div class="fios-header">
+                    <div class="fio-coluna">
+                        <h3>PVC</h3>
+                    </div>
+                    <div class="fio-coluna">
+                        <h3>EPR/XLPE 1KV</h3>
+                        <h4>UNIFILAR</h4>
+                    </div>
+                    <div class="fio-coluna">
+                        <h3>EPR/XLPE 1KV</h3>
+                        <h4>MULTIFILAR 2 VIAS</h4>
+                    </div>
+                    <div class="fio-coluna">
+                        <h3>EPR/XLPE 1KV</h3>
+                        <h4>MULTIFILAR 3 VIAS</h4>
+                    </div>
+                    <div class="fio-coluna">
+                        <h3>EPR/XLPE 1KV</h3>
+                        <h4>MULTIFILAR 4 VIAS</h4>
+                    </div>
+                </div>
+                
+                <!-- Linha inicial (única que aparece no início) -->
+                <div class="fios-linha">
+                    <div class="fio-opcao">
+                        <input type="radio" name="linha1" class="fio-radio" data-tipo="PVC">
+                        <select class="fio-tamanho" disabled>
+                            <option value="">Selecione</option>
+                        </select>
+                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+                    </div>
+                    <div class="fio-opcao">
+                        <input type="radio" name="linha1" class="fio-radio" data-tipo="EPR/XLPE 1KV UNIFILAR">
+                        <select class="fio-tamanho" disabled>
+                            <option value="">Selecione</option>
+                        </select>
+                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+                    </div>
+                    <div class="fio-opcao">
+                        <input type="radio" name="linha1" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 2 VIAS">
+                        <select class="fio-tamanho" disabled>
+                            <option value="">Selecione</option>
+                        </select>
+                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+                    </div>
+                    <div class="fio-opcao">
+                        <input type="radio" name="linha1" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 3 VIAS">
+                        <select class="fio-tamanho" disabled>
+                            <option value="">Selecione</option>
+                        </select>
+                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+                    </div>
+                    <div class="fio-opcao">
+                        <input type="radio" name="linha1" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 4 VIAS">
+                        <select class="fio-tamanho" disabled>
+                            <option value="">Selecione</option>
+                        </select>
+                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+                    </div>
+                </div>
+                
+                <!-- Container para linhas adicionais (inicialmente vazio) -->
+                <div id="linhas-adicionais"></div>
+            </div>
+            
+            <button id="adicionarLinha" class="main">+ Adicionar Linha</button>
+            <ul id="listarFios" class="list-group"></ul>
+        </section>
+
+        <button id="calcular" class="main">Calcular</button>
+        <div id="resultado" class="alert" style="display: none;"></div>
+    </main>
+
+    <footer>
+        <p><strong>Projetista - Técnico em Desenvolvimento de Sistemas: </strong> <a href="https://portfolio-piske.vercel.app/">Gabriel Schweder Piske</a></p>
+        <p><strong>Professor Orientador - Engenheiro Eletricista: </strong>Anderson Luis Wilvert</p>
+        <p>&copy SENAI - 2025</p>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
+
+
+
+import { eletrodutos, fios } from './dados.js';
+
+document.addEventListener("DOMContentLoaded", () => {
+    const selectEletroduto = document.getElementById("selectEletroduto");
+    const adicionarLinhaBtn = document.getElementById("adicionarLinha");
+    const calcularBtn = document.getElementById("calcular");
+    const resultadoDiv = document.getElementById("resultado");
+    const linhasAdicionais = document.getElementById("linhas-adicionais");
+    
+    let contadorLinhas = 1; // Começa com 1 porque já temos a primeira linha
+
+    // Carrega eletrodutos
+    eletrodutos.forEach(eletroduto => {
+        let option = document.createElement("option");
+        option.value = eletroduto.tipo;
+        option.textContent = eletroduto.tipo;
+        selectEletroduto.appendChild(option);
+    });
+
+    // Função para criar uma nova linha
+    function criarNovaLinha() {
+        if (contadorLinhas >= 4) {
+            mostrarResultado("Você pode adicionar no máximo 4 linhas.", "danger");
+            return;
+        }
+        
+        contadorLinhas++;
+        const novaLinha = document.createElement("div");
+        novaLinha.className = "fios-linha";
+        novaLinha.innerHTML = `
+            <div class="fio-opcao">
+                <input type="radio" name="linha${contadorLinhas}" class="fio-radio" data-tipo="PVC">
+                <select class="fio-tamanho" disabled>
+                    <option value="">Selecione</option>
+                </select>
+                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+            </div>
+            <div class="fio-opcao">
+                <input type="radio" name="linha${contadorLinhas}" class="fio-radio" data-tipo="EPR/XLPE 1KV UNIFILAR">
+                <select class="fio-tamanho" disabled>
+                    <option value="">Selecione</option>
+                </select>
+                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+            </div>
+            <div class="fio-opcao">
+                <input type="radio" name="linha${contadorLinhas}" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 2 VIAS">
+                <select class="fio-tamanho" disabled>
+                    <option value="">Selecione</option>
+                </select>
+                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+            </div>
+            <div class="fio-opcao">
+                <input type="radio" name="linha${contadorLinhas}" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 3 VIAS">
+                <select class="fio-tamanho" disabled>
+                    <option value="">Selecione</option>
+                </select>
+                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+            </div>
+            <div class="fio-opcao">
+                <input type="radio" name="linha${contadorLinhas}" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 4 VIAS">
+                <select class="fio-tamanho" disabled>
+                    <option value="">Selecione</option>
+                </select>
+                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+            </div>
+        `;
+        
+        linhasAdicionais.appendChild(novaLinha);
+        
+        // Configura os eventos para os novos radios
+        novaLinha.querySelectorAll('.fio-radio').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const tipoFio = this.dataset.tipo;
+                const fioData = fios.find(f => f.tipo === tipoFio);
+                const tamanhoSelect = this.parentElement.querySelector('.fio-tamanho');
+                const quantidadeInput = this.parentElement.querySelector('.fio-quantidade');
+                
+                tamanhoSelect.disabled = !this.checked;
+                quantidadeInput.disabled = !this.checked;
+                
+                if (this.checked && fioData) {
+                    tamanhoSelect.innerHTML = '<option value="">Selecione</option>';
+                    fioData.tamanhos.forEach(tamanho => {
+                        let option = document.createElement("option");
+                        option.value = tamanho.area;
+                        option.textContent = tamanho.nome;
+                        tamanhoSelect.appendChild(option);
+                    });
+                }
+            });
+        });
+    }
+
+    // Configura o botão para adicionar linhas
+    adicionarLinhaBtn.addEventListener("click", criarNovaLinha);
+
+    // Configura os eventos para a primeira linha
+    document.querySelectorAll('.fio-radio').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const tipoFio = this.dataset.tipo;
+            const fioData = fios.find(f => f.tipo === tipoFio);
+            const tamanhoSelect = this.parentElement.querySelector('.fio-tamanho');
+            const quantidadeInput = this.parentElement.querySelector('.fio-quantidade');
+            
+            tamanhoSelect.disabled = !this.checked;
+            quantidadeInput.disabled = !this.checked;
+            
+            if (this.checked && fioData) {
+                tamanhoSelect.innerHTML = '<option value="">Selecione</option>';
+                fioData.tamanhos.forEach(tamanho => {
+                    let option = document.createElement("option");
+                    option.value = tamanho.area;
+                    option.textContent = tamanho.nome;
+                    tamanhoSelect.appendChild(option);
+                });
+            }
+        });
+    });
+
+    calcularBtn.addEventListener("click", () => {
+        resultadoDiv.innerHTML = "";
+        resultadoDiv.classList.remove("alert-danger", "alert-info");
+
+        // Verifica se um eletroduto foi selecionado
+        let tipoEletrodutoSelecionado = selectEletroduto.value;
+        if (!tipoEletrodutoSelecionado) {
+            mostrarResultado("Selecione um tipo de eletroduto.", "danger");
+            return;
+        }
+
+        // Obtém todos os fios selecionados nas linhas
+        const fiosSelecionados = [];
+        
+        document.querySelectorAll('.fios-linha').forEach(linha => {
+            const radioSelecionado = linha.querySelector('.fio-radio:checked');
+            if (!radioSelecionado) return;
+            
+            const tipoFio = radioSelecionado.dataset.tipo;
+            const tamanhoSelect = radioSelecionado.parentElement.querySelector('.fio-tamanho');
+            const quantidadeInput = radioSelecionado.parentElement.querySelector('.fio-quantidade');
+            
+            if (tamanhoSelect.value === "") return;
+            
+            const fioData = fios.find(f => f.tipo === tipoFio);
+            if (!fioData) return;
+            
+            const tamanhoData = fioData.tamanhos.find(t => t.area.toString() === tamanhoSelect.value);
+            if (!tamanhoData) return;
+            
+            const quantidade = parseInt(quantidadeInput.value) || 1;
+            
+            fiosSelecionados.push({
+                tipo: tipoFio,
+                nome: tamanhoData.nome,
+                area: tamanhoData.area,
+                quantidade: quantidade
+            });
+        });
+
+        if (fiosSelecionados.length === 0) {
+            mostrarResultado("Selecione pelo menos um fio válido.", "danger");
+            return;
+        }
+
+        // Calcula a área ocupada e total de condutores
+        let areaOcupada = 0;
+        let totalCondutores = 0;
+
+        fiosSelecionados.forEach(fio => {
+            areaOcupada += parseFloat(fio.area) * fio.quantidade;
+            totalCondutores += fio.quantidade;
+        });
+
+        // Calcula o limite permitido conforme ABNT
+        let limitePermitido = calcularLimiteABNT(totalCondutores);
+        let eletrodutoSelecionado = eletrodutos.find(e => e.tipo === tipoEletrodutoSelecionado);
+
+        // Encontra o eletroduto adequado
+        let eletrodutoAdequado = eletrodutoSelecionado.tamanhos.find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
+
+        if (eletrodutoAdequado) {
+            const percentualOcupacao = (areaOcupada / eletrodutoAdequado.area) * 100;
+            mostrarResultado(`Use: ${eletrodutoAdequado.nome} (Área: ${eletrodutoAdequado.area} mm²)`, "info");
+            gerarRelatorio(fiosSelecionados, eletrodutoAdequado, areaOcupada, percentualOcupacao, limitePermitido);
+        } else {
+            // Procura em todos os eletrodutos por um adequado
+            let todosEletrodutos = eletrodutos.flatMap(e => e.tamanhos.map(t => ({
+                tipo: e.tipo,
+                nome: t.nome,
+                area: t.area
+            })));
+            
+            let eletrodutoRecomendado = todosEletrodutos.find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
+            
+            if (eletrodutoRecomendado) {
+                const percentualOcupacao = (areaOcupada / eletrodutoRecomendado.area) * 100;
+                mostrarResultado(`Nenhum adequado no tipo escolhido. Sugestão: ${eletrodutoRecomendado.tipo} ${eletrodutoRecomendado.nome} (Área: ${eletrodutoRecomendado.area} mm²)`, "danger");
+                gerarRelatorio(fiosSelecionados, eletrodutoRecomendado, areaOcupada, percentualOcupacao, limitePermitido);
+            } else {
+                mostrarResultado("Nenhum eletroduto disponível é adequado para a quantidade de fios selecionados.", "danger");
+            }
+        }
+    });
+
+    function calcularLimiteABNT(totalCondutores) {
+        if (totalCondutores === 1) return 53;
+        if (totalCondutores === 2) return 31;
+        return 40;
+    }
+
+    function mostrarResultado(mensagem, tipo) {
+        resultadoDiv.textContent = mensagem;
+        resultadoDiv.classList.add(`alert-${tipo}`);
+        resultadoDiv.style.display = "block";
+    }
+
+    function gerarRelatorio(fiosSelecionados, eletroduto, areaOcupada, percentual, limite) {
+        // Lista de fios selecionados
+        let listaFiosHTML = '<div class="fios-selecionados"><h3>Fios Selecionados:</h3><ul>';
+        
+        fiosSelecionados.forEach(fio => {
+            listaFiosHTML += `<li>${fio.tipo} (${fio.nome}) - Quantidade: ${fio.quantidade}</li>`;
+        });
+        listaFiosHTML += '</ul></div>';
+        
+        // Relatório de ocupação
+        resultadoDiv.innerHTML = `
+            ${listaFiosHTML}
+            <div class="relatorio-card">
+                <h2>📊 Relatório de Ocupação</h2>
+                <p><span class="label">Eletroduto:</span> ${eletroduto.tipo ? eletroduto.tipo + ' ' : ''}${eletroduto.nome}</p>
+                <p><span class="label">Área Total:</span> ${eletroduto.area} mm²</p>
+                <p><span class="label">Área Ocupada:</span> ${areaOcupada.toFixed(2)} mm²</p>
+                <p><span class="label">Percentual de Ocupação:</span> <strong>${percentual.toFixed(2)}%</strong></p>
+                <p><span class="label">Limite Permitido:</span> ${limite}%</p>
+                <p><span class="label">Total de Condutores:</span> ${fiosSelecionados.reduce((total, fio) => total + fio.quantidade, 0)}</p>
+            </div>`;
+    }
+});
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+:root {
+    --bg-color: #3a3a3a;
+    --section-color: #4a4a4a;
+    --subsection-color: #5a5a5a;
+    --selection-bg-color: #758592;
+    --text-color: #ffffff;
+    --main-color: #2b8cd9;
+    --secondary-color: #1e6fb0;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+    color: var(--text-color);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    padding-top: 80px;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    background-color: var(--main-color);
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+section {
+    background-color: var(--section-color);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+select,
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+select {
+    background-color: var(--selection-bg-color);
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+button.main {
+    background-color: var(--main-color);
+    cursor: pointer;
+    font-weight: 500;
+}
+
+button.main:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+ul.list-group {
+    margin-top: 10px;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.alert {
+    padding: 15px;
+    background-color: var(--subsection-color);
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+input.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--selection-bg-color);
+    color: var(--text-color);
+}
+
+.mb-2 {
+    margin-bottom: 10px;
+}
+
+.relatorio-card {
+    background-color: var(--subsection-color);
+    border-radius: 10px;
+    padding: 25px;
+    margin-top: 20px;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.relatorio-card h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: var(--main-color);
+}
+
+.relatorio-card p {
+    font-size: 18px;
+    margin: 8px 0;
+}
+
+.relatorio-card .label {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+footer {
+    padding: 20px;
+    text-align: center;
+    background-color: var(--section-color);
+    width: 100%;
+    margin-top: auto;
+}
+
+footer p {
+    font-size: 16px;
+}
+
+.fios-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.fios-header {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+    min-width: 800px;
+}
+
+.fio-coluna {
+    text-align: center;
+    padding: 12px;
+    background-color: var(--subsection-color);
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fio-coluna h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.fio-coluna h4 {
+    margin: 5px 0 0 0;
+    font-size: 14px;
+    font-weight: normal;
+    color: #cccccc;
+}
+
+.fios-linha {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    min-width: 800px;
+}
+
+.fio-opcao {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background-color: var(--subsection-color);
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fio-radio {
+    margin: 0 auto;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.fio-tamanho,
+.fio-quantidade {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    background-color: var(--selection-bg-color);
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+.fio-tamanho {
+    cursor: pointer;
+}
+
+.fio-opcao input[type="radio"]:checked~.fio-tamanho,
+.fio-opcao input[type="radio"]:checked~.fio-quantidade {
+    background-color: var(--selection-bg-color);
+    opacity: 1;
+}
+
+.fio-opcao input[type="radio"]:not(:checked)~.fio-tamanho,
+.fio-opcao input[type="radio"]:not(:checked)~.fio-quantidade {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#adicionarLinha {
+    margin-bottom: 15px;
+    background-color: var(--subsection-color);
+    color: var(--text-color);
+    border: 1px solid var(--main-color);
+}
+
+#adicionarLinha:hover {
+    background-color: var(--main-color);
+}
+
+#linhas-adicionais {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Responsividade */
+@media (max-width: 1200px) {
+    main {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 992px) {
+
+    .fios-header,
+    .fios-linha {
+        min-width: 700px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px;
+    }
+
+    header h1 {
+        font-size: 24px;
+    }
+
+    section {
+        padding: 15px;
+    }
+
+    .fios-container {
+        overflow-x: scroll;
+        padding-bottom: 10px;
+    }
+
+    .fio-coluna h3 {
+        font-size: 14px;
+    }
+
+    .fio-coluna h4 {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+
+    select,
+    button {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .relatorio-card {
+        padding: 15px;
+    }
+
+    .relatorio-card h2 {
+        font-size: 20px;
+    }
+
+    .relatorio-card p {
+        font-size: 16px;
+    }
+}
+
+.fios-selecionados ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.fios-selecionados li {
+    padding: 5px 0;
+}
+

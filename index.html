@@ -10,6 +10,7 @@
 
 <body>
     <header>
+        <img src="images/senai.png" alt="Logo Senai">
         <h1>Dimensionamento de Eletrodutos Conforme Taxa de Ocupação</h1>
     </header>
 
@@ -21,21 +22,24 @@
             </select>
         </section>
 
-        <section>
+        <section id="selecaoFios">
             <h2>Escolha a Isolação do Condutor</h2>
-            <button id="adicionarFio" class="main">Adicionar Fio</button>
+            <div class="fios-container">
+                <div id="linhas-adicionais"></div>
+            </div>
+
+            <button id="adicionarLinha" class="main">+ Adicionar Linha</button>
             <ul id="listarFios" class="list-group"></ul>
         </section>
 
         <button id="calcular" class="main">Calcular</button>
-
         <div id="resultado" class="alert" style="display: none;"></div>
     </main>
 
     <footer>
-        <p><strong>Projetista - Técnico em Desenvolvimento de Sistemas: </strong> <a href="https://portfolio-piske.vercel.app/">Gabriel Schweder Piske</a></p>
+        <p><strong>Desenvolvedores - Técnico em Desenvolvimento de Sistemas: </strong> <a href="https://portfolio-piske.vercel.app/">Gabriel Schweder Piske</a> e <a href="https://github.com/JulioBusarello">Julio Henrique Busarello</a></p>
         <p><strong>Professor Orientador - Engenheiro Eletricista: </strong>Anderson Luis Wilvert</p>
-        <p>&copy SENAI - 2025</p>
+        <p>&copy SENAI Timbó - 2025</p>
     </footer>
 
     <script type="module" src="script.js"></script>
