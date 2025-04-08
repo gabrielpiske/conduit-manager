@@ -2,14 +2,12 @@ import { eletrodutos, fios } from './dados.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     const selectEletroduto = document.getElementById("selectEletroduto");
+    const linhasAdicionais = document.getElementById("linhas-adicionais");
     const adicionarLinhaBtn = document.getElementById("adicionarLinha");
     const calcularBtn = document.getElementById("calcular");
     const resultadoDiv = document.getElementById("resultado");
-    const linhasAdicionais = document.getElementById("linhas-adicionais");
-    
-    let contadorLinhas = 1; // Começa com 1 porque já temos a primeira linha
 
-    // Carrega eletrodutos
+    // Preenche o select de eletrodutos
     eletrodutos.forEach(eletroduto => {
         let option = document.createElement("option");
         option.value = eletroduto.tipo;
@@ -17,185 +15,182 @@ document.addEventListener("DOMContentLoaded", () => {
         selectEletroduto.appendChild(option);
     });
 
-    // Função para criar uma nova linha
-    function criarNovaLinha() {
-        if (contadorLinhas >= 4) {
-            mostrarResultado("Você pode adicionar no máximo 4 linhas.", "danger");
-            return;
-        }
-        
-        contadorLinhas++;
-        const novaLinha = document.createElement("div");
-        novaLinha.className = "fios-linha";
-        novaLinha.innerHTML = `
-            <div class="fio-opcao">
-                <input type="radio" name="linha${contadorLinhas}" class="fio-radio" data-tipo="PVC">
-                <select class="fio-tamanho" disabled>
-                    <option value="">Selecione</option>
-                </select>
-                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
-            </div>
-            <div class="fio-opcao">
-                <input type="radio" name="linha${contadorLinhas}" class="fio-radio" data-tipo="EPR/XLPE 1KV UNIFILAR">
-                <select class="fio-tamanho" disabled>
-                    <option value="">Selecione</option>
-                </select>
-                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
-            </div>
-            <div class="fio-opcao">
-                <input type="radio" name="linha${contadorLinhas}" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 2 VIAS">
-                <select class="fio-tamanho" disabled>
-                    <option value="">Selecione</option>
-                </select>
-                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
-            </div>
-            <div class="fio-opcao">
-                <input type="radio" name="linha${contadorLinhas}" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 3 VIAS">
-                <select class="fio-tamanho" disabled>
-                    <option value="">Selecione</option>
-                </select>
-                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
-            </div>
-            <div class="fio-opcao">
-                <input type="radio" name="linha${contadorLinhas}" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 4 VIAS">
-                <select class="fio-tamanho" disabled>
-                    <option value="">Selecione</option>
-                </select>
-                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
-            </div>
-        `;
-        
-        linhasAdicionais.appendChild(novaLinha);
-        
-        // Configura os eventos para os novos radios
-        novaLinha.querySelectorAll('.fio-radio').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const tipoFio = this.dataset.tipo;
-                const fioData = fios.find(f => f.tipo === tipoFio);
-                const tamanhoSelect = this.parentElement.querySelector('.fio-tamanho');
-                const quantidadeInput = this.parentElement.querySelector('.fio-quantidade');
-                
-                tamanhoSelect.disabled = !this.checked;
-                quantidadeInput.disabled = !this.checked;
-                
-                if (this.checked && fioData) {
-                    tamanhoSelect.innerHTML = '<option value="">Selecione</option>';
-                    fioData.tamanhos.forEach(tamanho => {
-                        let option = document.createElement("option");
-                        option.value = tamanho.area;
-                        option.textContent = tamanho.nome;
-                        tamanhoSelect.appendChild(option);
-                    });
-                }
-            });
-        });
-    }
-
-    // Configura o botão para adicionar linhas
-    adicionarLinhaBtn.addEventListener("click", criarNovaLinha);
-
-    // Configura os eventos para a primeira linha
+    // Adiciona evento aos radios da primeira linha
     document.querySelectorAll('.fio-radio').forEach(radio => {
         radio.addEventListener('change', function() {
-            const tipoFio = this.dataset.tipo;
-            const fioData = fios.find(f => f.tipo === tipoFio);
-            const tamanhoSelect = this.parentElement.querySelector('.fio-tamanho');
-            const quantidadeInput = this.parentElement.querySelector('.fio-quantidade');
+            const linha = this.closest('.fios-linha');
+            const selectTamanho = linha.querySelector('.fio-tamanho');
+            const inputQuantidade = linha.querySelector('.fio-quantidade');
             
-            tamanhoSelect.disabled = !this.checked;
-            quantidadeInput.disabled = !this.checked;
-            
-            if (this.checked && fioData) {
-                tamanhoSelect.innerHTML = '<option value="">Selecione</option>';
-                fioData.tamanhos.forEach(tamanho => {
-                    let option = document.createElement("option");
-                    option.value = tamanho.area;
-                    option.textContent = tamanho.nome;
-                    tamanhoSelect.appendChild(option);
-                });
+            if (this.checked) {
+                const tipoFio = this.getAttribute('data-tipo');
+                preencherSelectTamanho(selectTamanho, tipoFio);
+                selectTamanho.disabled = false;
+                inputQuantidade.disabled = false;
             }
         });
     });
 
+    // Função para preencher os selects de tamanho
+    function preencherSelectTamanho(select, tipoFio) {
+        select.innerHTML = '<option value="">Selecione</option>';
+        
+        const grupoFios = fios.find(fio => fio.tipo === tipoFio);
+        
+        if (grupoFios) {
+            grupoFios.tamanhos.forEach(tamanho => {
+                let option = document.createElement("option");
+                option.value = tamanho.area;
+                option.textContent = `${tamanho.nome} (${tamanho.area.toFixed(2)} mm²)`;
+                select.appendChild(option);
+            });
+        }
+    }
+
+    // Adicionar nova linha de fios
+    adicionarLinhaBtn.addEventListener("click", () => {
+        // Verifica quantas linhas já existem
+        const totalLinhas = document.querySelectorAll('.fios-linha').length;
+        
+        if (totalLinhas >= 4) {
+            mostrarResultado("Máximo de 4 linhas atingido.", "danger");
+            return;
+        }
+    
+        const novaLinha = document.createElement("div");
+        novaLinha.className = "fios-linha";
+        
+        const linhaNumero = totalLinhas + 1;
+        
+        novaLinha.innerHTML = `
+            <div class="opcoes-fio">
+                <div class="fio">
+                    <input type="radio" name="linha${linhaNumero}" id="fio-pvc-${linhaNumero}" class="fio-radio" data-tipo="PVC">
+                    <label for="fio-pvc-${linhaNumero}" class="fio-label">PVC</label>
+                </div>
+
+                <div class="fio">
+                    <input type="radio" name="linha${linhaNumero}" id="fio-unifilar-${linhaNumero}" class="fio-radio" data-tipo="EPR/XLPE 1KV UNIFILAR">
+                    <label for="fio-unifilar-${linhaNumero}" class="fio-label">EPR/XLPE 1KV<br><small>UNIFILAR</small></label>
+                </div>
+
+                <div class="fio">
+                    <input type="radio" name="linha${linhaNumero}" id="fio-multi2-${linhaNumero}" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 2 VIAS">
+                    <label for="fio-multi2-${linhaNumero}" class="fio-label">EPR/XLPE 1KV<br><small>MULTIFILAR 2 VIAS</small></label>
+                </div>
+
+                <div class="fio">
+                    <input type="radio" name="linha${linhaNumero}" id="fio-multi3-${linhaNumero}" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 3 VIAS">
+                    <label for="fio-multi3-${linhaNumero}" class="fio-label">EPR/XLPE 1KV<br><small>MULTIFILAR 3 VIAS</small></label>
+                </div>
+
+                <div class="fio">
+                    <input type="radio" name="linha${linhaNumero}" id="fio-multi4-${linhaNumero}" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 4 VIAS">
+                    <label for="fio-multi4-${linhaNumero}" class="fio-label">EPR/XLPE 1KV<br><small>MULTIFILAR 4 VIAS</small></label>
+                </div>
+                </div>
+                <select class="fio-tamanho" disabled>
+                    <option value="">Selecione</option>
+                </select>
+                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+                <button class="remover-linha" aria-label="Remover linha">×</button>
+            `;
+            
+            linhasAdicionais.appendChild(novaLinha);
+            
+            // ... (mantenha o restante do código de eventos) ...
+        });
+        
+        // Adicione este estilo para desabilitar o botão quando atingir o máximo
+        const maxLinhas = 4;
+        function atualizarBotaoAdicionar() {
+            const totalLinhas = document.querySelectorAll('.fios-linha').length;
+            adicionarLinhaBtn.disabled = totalLinhas >= maxLinhas;
+            
+            if (adicionarLinhaBtn.disabled) {
+                adicionarLinhaBtn.style.opacity = "0.5";
+                adicionarLinhaBtn.style.cursor = "not-allowed";
+            } else {
+                adicionarLinhaBtn.style.opacity = "1";
+                adicionarLinhaBtn.style.cursor = "pointer";
+            }
+        }
+        
+        // Chame esta função sempre que uma linha for adicionada ou removida
+        adicionarLinhaBtn.addEventListener("click", atualizarBotaoAdicionar);
+        
+        // Adicione ao evento de remoção de linha
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remover-linha')) {
+                e.target.closest('.fios-linha').remove();
+                atualizarBotaoAdicionar();
+            }
+        });
+
+    // Calcular dimensionamento
     calcularBtn.addEventListener("click", () => {
         resultadoDiv.innerHTML = "";
-        resultadoDiv.classList.remove("alert-danger", "alert-info");
+        resultadoDiv.style.display = "none";
 
-        // Verifica se um eletroduto foi selecionado
-        let tipoEletrodutoSelecionado = selectEletroduto.value;
+        const tipoEletrodutoSelecionado = selectEletroduto.value;
         if (!tipoEletrodutoSelecionado) {
             mostrarResultado("Selecione um tipo de eletroduto.", "danger");
             return;
         }
 
-        // Obtém todos os fios selecionados nas linhas
+        let areaOcupada = 0;
+        let totalCondutores = 0;
         const fiosSelecionados = [];
-        
+
+        // Verifica todas as linhas (inicial e adicionais)
         document.querySelectorAll('.fios-linha').forEach(linha => {
             const radioSelecionado = linha.querySelector('.fio-radio:checked');
-            if (!radioSelecionado) return;
+            const selectTamanho = linha.querySelector('.fio-tamanho');
+            const inputQuantidade = linha.querySelector('.fio-quantidade');
             
-            const tipoFio = radioSelecionado.dataset.tipo;
-            const tamanhoSelect = radioSelecionado.parentElement.querySelector('.fio-tamanho');
-            const quantidadeInput = radioSelecionado.parentElement.querySelector('.fio-quantidade');
-            
-            if (tamanhoSelect.value === "") return;
-            
-            const fioData = fios.find(f => f.tipo === tipoFio);
-            if (!fioData) return;
-            
-            const tamanhoData = fioData.tamanhos.find(t => t.area.toString() === tamanhoSelect.value);
-            if (!tamanhoData) return;
-            
-            const quantidade = parseInt(quantidadeInput.value) || 1;
-            
-            fiosSelecionados.push({
-                tipo: tipoFio,
-                nome: tamanhoData.nome,
-                area: tamanhoData.area,
-                quantidade: quantidade
-            });
+            if (radioSelecionado && selectTamanho.value && inputQuantidade.value > 0) {
+                const tipoFio = radioSelecionado.getAttribute('data-tipo');
+                const area = parseFloat(selectTamanho.value);
+                const quantidade = parseInt(inputQuantidade.value);
+                areaOcupada += area * quantidade;
+                totalCondutores += quantidade;
+                
+                const optionText = selectTamanho.options[selectTamanho.selectedIndex].text;
+                fiosSelecionados.push({
+                    tipo: tipoFio, // Adiciona o tipo do fio
+                    nome: optionText.split(' (')[0],
+                    area: area,
+                    quantidade: quantidade
+                });
+            }
         });
 
-        if (fiosSelecionados.length === 0) {
-            mostrarResultado("Selecione pelo menos um fio válido.", "danger");
+        if (areaOcupada === 0) {
+            mostrarResultado("Adicione pelo menos um fio válido.", "danger");
             return;
         }
 
-        // Calcula a área ocupada e total de condutores
-        let areaOcupada = 0;
-        let totalCondutores = 0;
+        const limitePermitido = calcularLimiteABNT(totalCondutores);
+        const eletrodutoSelecionado = eletrodutos.find(e => e.tipo === tipoEletrodutoSelecionado);
 
-        fiosSelecionados.forEach(fio => {
-            areaOcupada += parseFloat(fio.area) * fio.quantidade;
-            totalCondutores += fio.quantidade;
-        });
-
-        // Calcula o limite permitido conforme ABNT
-        let limitePermitido = calcularLimiteABNT(totalCondutores);
-        let eletrodutoSelecionado = eletrodutos.find(e => e.tipo === tipoEletrodutoSelecionado);
-
-        // Encontra o eletroduto adequado
-        let eletrodutoAdequado = eletrodutoSelecionado.tamanhos.find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
+        // Encontrar o menor eletroduto que atende ao limite
+        const eletrodutoAdequado = eletrodutoSelecionado.tamanhos
+            .sort((a, b) => a.area - b.area)
+            .find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
 
         if (eletrodutoAdequado) {
-            const percentualOcupacao = (areaOcupada / eletrodutoAdequado.area) * 100;
-            mostrarResultado(`Use: ${eletrodutoAdequado.nome} (Área: ${eletrodutoAdequado.area} mm²)`, "info");
-            gerarRelatorio(fiosSelecionados, eletrodutoAdequado, areaOcupada, percentualOcupacao, limitePermitido);
+            const percentual = (areaOcupada / eletrodutoAdequado.area) * 100;
+            mostrarResultado(`Eletroduto adequado: ${eletrodutoAdequado.nome} (${eletrodutoAdequado.area.toFixed(2)} mm²)`, "info");
+            gerarRelatorio(eletrodutoAdequado, areaOcupada, percentual, limitePermitido, fiosSelecionados);
         } else {
-            // Procura em todos os eletrodutos por um adequado
-            let todosEletrodutos = eletrodutos.flatMap(e => e.tamanhos.map(t => ({
-                tipo: e.tipo,
-                nome: t.nome,
-                area: t.area
-            })));
-            
-            let eletrodutoRecomendado = todosEletrodutos.find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
+            // Procurar em todos os eletrodutos se não encontrar no tipo selecionado
+            const todosEletrodutos = eletrodutos.flatMap(e => e.tamanhos);
+            const eletrodutoRecomendado = todosEletrodutos
+                .sort((a, b) => a.area - b.area)
+                .find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
             
             if (eletrodutoRecomendado) {
-                const percentualOcupacao = (areaOcupada / eletrodutoRecomendado.area) * 100;
-                mostrarResultado(`Nenhum adequado no tipo escolhido. Sugestão: ${eletrodutoRecomendado.tipo} ${eletrodutoRecomendado.nome} (Área: ${eletrodutoRecomendado.area} mm²)`, "danger");
-                gerarRelatorio(fiosSelecionados, eletrodutoRecomendado, areaOcupada, percentualOcupacao, limitePermitido);
+                mostrarResultado(`Nenhum eletroduto adequado no tipo selecionado. Recomendado: ${eletrodutoRecomendado.nome} (${eletrodutoRecomendado.area.toFixed(2)} mm²)`, "danger");
             } else {
                 mostrarResultado("Nenhum eletroduto disponível é adequado para a quantidade de fios selecionados.", "danger");
             }
@@ -210,30 +205,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function mostrarResultado(mensagem, tipo) {
         resultadoDiv.textContent = mensagem;
-        resultadoDiv.classList.add(`alert-${tipo}`);
+        resultadoDiv.className = `alert alert-${tipo}`;
         resultadoDiv.style.display = "block";
     }
 
-    function gerarRelatorio(fiosSelecionados, eletroduto, areaOcupada, percentual, limite) {
-        // Lista de fios selecionados
-        let listaFiosHTML = '<div class="fios-selecionados"><h3>Fios Selecionados:</h3><ul>';
+    function gerarRelatorio(eletroduto, areaOcupada, percentual, limite, fiosSelecionados) {
+        let listaFiosHTML = '<div class="fios-selecionados"><h3>Condutores selecionados:</h3><ul>';
         
         fiosSelecionados.forEach(fio => {
-            listaFiosHTML += `<li>${fio.tipo} (${fio.nome}) - Quantidade: ${fio.quantidade}</li>`;
+            listaFiosHTML += `<li>${fio.tipo} - ${fio.nome} (${fio.quantidade}x ${fio.area.toFixed(2)} mm²)</li>`;
         });
-        listaFiosHTML += '</ul></div>';
         
-        // Relatório de ocupação
+        listaFiosHTML += '</ul></div>';
+
         resultadoDiv.innerHTML = `
             ${listaFiosHTML}
             <div class="relatorio-card">
-                <h2>📊 Relatório de Ocupação</h2>
-                <p><span class="label">Eletroduto:</span> ${eletroduto.tipo ? eletroduto.tipo + ' ' : ''}${eletroduto.nome}</p>
-                <p><span class="label">Área Total:</span> ${eletroduto.area} mm²</p>
-                <p><span class="label">Área Ocupada:</span> ${areaOcupada.toFixed(2)} mm²</p>
-                <p><span class="label">Percentual de Ocupação:</span> <strong>${percentual.toFixed(2)}%</strong></p>
-                <p><span class="label">Limite Permitido:</span> ${limite}%</p>
-                <p><span class="label">Total de Condutores:</span> ${fiosSelecionados.reduce((total, fio) => total + fio.quantidade, 0)}</p>
-            </div>`;
+                <h2>📊 Relatório de Dimensionamento</h2>
+                <p><strong>Eletroduto selecionado:</strong> ${eletroduto.nome}</p>
+                <p><strong>Área total do eletroduto:</strong> ${eletroduto.area.toFixed(2)} mm²</p>
+                <p><strong>Área ocupada pelos condutores:</strong> ${areaOcupada.toFixed(2)} mm²</p>
+                <p><strong>Percentual de ocupação:</strong> ${percentual.toFixed(2)}%</p>
+                <p><strong>Limite Permitido:</strong> ${limite}%</p>
+                <p><strong>Total de Condutores:</strong> ${fiosSelecionados.reduce((total, fio) => total + fio.quantidade, 0)}</p>
+            </div>
+        `;
     }
 });

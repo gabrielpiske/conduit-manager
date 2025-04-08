@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cálculo de Eletrodutos</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header>
+        <img src="images/senai.png" alt="Logo Senai">
         <h1>Dimensionamento de Eletrodutos Conforme Taxa de Ocupação</h1>
     </header>
 
@@ -22,71 +25,9 @@
         <section id="selecaoFios">
             <h2>Escolha a Isolação do Condutor</h2>
             <div class="fios-container">
-                <div class="fios-header">
-                    <div class="fio-coluna">
-                        <h3>PVC</h3>
-                    </div>
-                    <div class="fio-coluna">
-                        <h3>EPR/XLPE 1KV</h3>
-                        <h4>UNIFILAR</h4>
-                    </div>
-                    <div class="fio-coluna">
-                        <h3>EPR/XLPE 1KV</h3>
-                        <h4>MULTIFILAR 2 VIAS</h4>
-                    </div>
-                    <div class="fio-coluna">
-                        <h3>EPR/XLPE 1KV</h3>
-                        <h4>MULTIFILAR 3 VIAS</h4>
-                    </div>
-                    <div class="fio-coluna">
-                        <h3>EPR/XLPE 1KV</h3>
-                        <h4>MULTIFILAR 4 VIAS</h4>
-                    </div>
-                </div>
-                
-                <!-- Linha inicial (única que aparece no início) -->
-                <div class="fios-linha">
-                    <div class="fio-opcao">
-                        <input type="radio" name="linha1" class="fio-radio" data-tipo="PVC">
-                        <select class="fio-tamanho" disabled>
-                            <option value="">Selecione</option>
-                        </select>
-                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
-                    </div>
-                    <div class="fio-opcao">
-                        <input type="radio" name="linha1" class="fio-radio" data-tipo="EPR/XLPE 1KV UNIFILAR">
-                        <select class="fio-tamanho" disabled>
-                            <option value="">Selecione</option>
-                        </select>
-                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
-                    </div>
-                    <div class="fio-opcao">
-                        <input type="radio" name="linha1" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 2 VIAS">
-                        <select class="fio-tamanho" disabled>
-                            <option value="">Selecione</option>
-                        </select>
-                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
-                    </div>
-                    <div class="fio-opcao">
-                        <input type="radio" name="linha1" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 3 VIAS">
-                        <select class="fio-tamanho" disabled>
-                            <option value="">Selecione</option>
-                        </select>
-                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
-                    </div>
-                    <div class="fio-opcao">
-                        <input type="radio" name="linha1" class="fio-radio" data-tipo="EPR/XLPE 1KV MULTIFILAR 4 VIAS">
-                        <select class="fio-tamanho" disabled>
-                            <option value="">Selecione</option>
-                        </select>
-                        <input type="number" class="fio-quantidade" min="1" value="1" disabled>
-                    </div>
-                </div>
-                
-                <!-- Container para linhas adicionais (inicialmente vazio) -->
                 <div id="linhas-adicionais"></div>
             </div>
-            
+
             <button id="adicionarLinha" class="main">+ Adicionar Linha</button>
             <ul id="listarFios" class="list-group"></ul>
         </section>
@@ -96,11 +37,13 @@
     </main>
 
     <footer>
-        <p><strong>Projetista - Técnico em Desenvolvimento de Sistemas: </strong> <a href="https://portfolio-piske.vercel.app/">Gabriel Schweder Piske</a></p>
+        <p><strong>Projetista - Técnico em Desenvolvimento de Sistemas: </strong> <a
+                href="https://portfolio-piske.vercel.app/">Gabriel Schweder Piske</a></p>
         <p><strong>Professor Orientador - Engenheiro Eletricista: </strong>Anderson Luis Wilvert</p>
         <p>&copy SENAI - 2025</p>
     </footer>
 
     <script type="module" src="script.js"></script>
 </body>
+
 </html>
