@@ -1,5 +1,3 @@
-import { eletrodutos, fios } from './dados.js';
-
 document.addEventListener("DOMContentLoaded", () => {
     const selectEletroduto = document.getElementById("selectEletroduto");
     const linhasAdicionais = document.getElementById("linhas-adicionais");
@@ -7,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const calcularBtn = document.getElementById("calcular");
     const resultadoDiv = document.getElementById("resultado");
 
-    // Preenche o select de eletrodutos
+
     eletrodutos.forEach(eletroduto => {
         let option = document.createElement("option");
         option.value = eletroduto.tipo;
