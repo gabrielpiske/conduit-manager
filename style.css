@@ -68,7 +68,6 @@ select,
 button {
     width: 100%;
     padding: 12px;
-    margin-top: 10px;
     border-radius: 5px;
     border: none;
     font-size: 16px;
@@ -211,7 +210,7 @@ footer p {
 
 .fios-linha select,
 .fios-linha input {
-    margin-bottom: 10px;
+    margin-bottom: 0;
 }
 
 .opcoes-container {
@@ -457,4 +456,21 @@ footer p {
 .relatorio-btn:active {
     transform: translateY(0);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.inputs-container {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    align-items: center;
+}
+
+.inputs-container .fio-tamanho {
+    flex: 1; /* Ocupa todo o espaço disponível */
+    min-width: 0; /* Permite que o elemento encolha */
+}
+
+.inputs-container .fio-quantidade {
+    width: 80px; /* Largura fixa para o input de quantidade */
+    flex-shrink: 0; /* Impede que o elemento encolha */
 }

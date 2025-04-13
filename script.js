@@ -121,10 +121,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     </button>
                 </div>
             </div>
-            <select class="fio-tamanho" disabled>
-                <option value="">Selecione</option>
-            </select>
-            <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+            <div class="inputs-container">
+                <select class="fio-tamanho" disabled>
+                    <option value="">Selecione</option>
+                </select>
+                <input type="number" class="fio-quantidade" min="1" value="1" disabled>
+            </div>
         `;
         
         linhasAdicionais.appendChild(novaLinha);
