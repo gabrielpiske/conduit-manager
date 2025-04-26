@@ -314,7 +314,10 @@ footer p {
     border: none;
     background-color: var(--selection-bg-color);
     color: var(--text-color);
-    font-size: 14px;
+    font-size: 1.2rem;  /* Tamanho similar ao h2 */
+    font-weight: 600;   /* Peso similar ao título */
+    padding: 12px 15px; /* Aumente o padding para melhor aparência */
+    height: auto;
 }
 
 .fio-tamanho {
