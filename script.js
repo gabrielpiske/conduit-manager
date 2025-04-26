@@ -298,3 +298,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // Adiciona a primeira linha inicial
     adicionarLinhaBtn.click();
 });
+
+// Script para controlar o modal
+document.addEventListener('DOMContentLoaded', function() {
+    const helpButton = document.getElementById('helpButton');
+    const helpModal = document.getElementById('helpModal');
+    const closeModal = document.getElementById('closeModal');
+    
+    helpButton.addEventListener('click', function() {
+        helpModal.style.display = 'block';
+    });
+    
+    closeModal.addEventListener('click', function() {
+        helpModal.style.display = 'none';
+    });
+    
+    // Fechar modal ao clicar fora
+    window.addEventListener('click', function(event) {
+        if (event.target === helpModal) {
+            helpModal.style.display = 'none';
+        }
+    });
+});
