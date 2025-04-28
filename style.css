@@ -229,7 +229,7 @@ footer p {
 
 .opcoes-fio {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(123px, 1fr));
     gap: 10px;
     flex-grow: 1;
     align-items: stretch;
@@ -283,7 +283,7 @@ footer p {
 .fio-remover {
     display: flex;
     align-items: stretch;
-    min-width: 60px;
+    min-width: 80px;
 }
 
 .remover-linha {
@@ -329,6 +329,11 @@ footer p {
 .fio-tamanho {
     cursor: pointer;
 }
+
+input:focus, select:focus {
+    border: 1px solid var(--main-color);
+    outline: none;
+  }
 
 .fio-opcao input[type="radio"]:checked~.fio-tamanho,
 .fio-opcao input[type="radio"]:checked~.fio-quantidade {
