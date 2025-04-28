@@ -58,6 +58,7 @@ export const fios = [
             { nome: "Cabo 2,5mm²", area: Math.PI * Math.pow(5.20, 2) / 4 },
             { nome: "Cabo 4mm²", area: Math.PI * Math.pow(5.75, 2) / 4 },
             { nome: "Cabo 6mm²", area: Math.PI * Math.pow(6.49, 2) / 4 },
+            { nome: "Cabo 10mm²", area: Math.PI * Math.pow(7.20, 2) / 4 },
             { nome: "Cabo 16mm²", area: Math.PI * Math.pow(8.20, 2) / 4 },
             { nome: "Cabo 25mm²", area: Math.PI * Math.pow(10, 2) / 4 },
             { nome: "Cabo 35mm²", area: Math.PI * Math.pow(5.75, 2) / 4 },
