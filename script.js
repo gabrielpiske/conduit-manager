@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 .find(e => (areaOcupada / e.area) * 100 <= limitePermitido);
             
             if (eletrodutoRecomendado) {
-                mostrarResultado(`Nenhum eletroduto adequado no tipo selecionado. Recomendado: ${eletrodutoRecomendado.nome} (${eletrodutoRecomendado.area.toFixed(2)} mm²)`, "danger");
+                mostrarResultado(`Nenhum eletroduto adequado no tipo selecionado.`, "danger");
             } else {
                 mostrarResultado("Nenhum eletroduto disponível é adequado para a quantidade de fios selecionados.", "danger");
             }

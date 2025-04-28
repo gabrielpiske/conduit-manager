@@ -64,6 +64,12 @@ section {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+
+#calcular{
+    font-size: 30px;
+    font-weight: 700;
+}
+
 select,
 button {
     width: 100%;
