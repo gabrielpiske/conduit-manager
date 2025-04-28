@@ -343,6 +343,8 @@ footer p {
 }
 
 #adicionarLinha {
+    font-size: 23px;
+    font-weight: 700;
     margin-bottom: 15px;
     background-color: var(--subsection-color);
     color: var(--text-color);
