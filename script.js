@@ -228,8 +228,9 @@ document.addEventListener("DOMContentLoaded", () => {
         resultadoDiv.innerHTML = `
             ${listaFiosHTML}
             <div class="relatorio-card">
-                <h2>📊 Relatório de Dimensionamento</h2>
-                <p><strong>Eletroduto selecionado:</strong> ${eletroduto.nome}</p>
+                <h1>📊 Relatório de Dimensionamento</h1>
+                <h2><strong>Eletroduto selecionado:</strong> ${eletroduto.nome}</h2>
+                <br>
                 <p><strong>Área total do eletroduto:</strong> ${areaEletroduto.toFixed(2)} mm²</p>
                 <p><strong>Área ocupada pelos condutores:</strong> ${areaOcupada.toFixed(2)} mm²</p>
                 <p><strong>Percentual de ocupação:</strong> ${percentual.toFixed(2)}%</p>
